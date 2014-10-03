@@ -1,0 +1,25 @@
+{
+  "name": "node-opentoken",
+  "version": "1.0.0",
+  "description": "OpenToken support for Node.JS",
+  "main": "opentoken.js",
+  "scripts": {
+    "test": "node test/opentoken_test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/darrenderidder/node-opentoken.git"
+  },
+  "keywords": [
+    "OpenToken",
+    "Auth",
+    "Single",
+    "Sign-On"
+  ],
+  "author": "Darren DeRidder",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/darrenderidder/node-opentoken/issues"
+  },
+  "homepage": "https://github.com/darrenderidder/node-opentoken"
+}
