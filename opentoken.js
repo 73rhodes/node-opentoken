@@ -9,11 +9,12 @@ var zlib   = require('zlib');
 
 /**
  * Cipher Suites supported by OpenToken specification
- * The order of these strings is important!
+ * The order of these is important!
  */
 
 var cipherSuites = [
   {
+    id: 0,
     name: "Null",
     cipher: null,
     keysize: 0,
@@ -22,6 +23,7 @@ var cipherSuites = [
     ivlength: 0
   },
   {
+    id: 1,
     name: "aes-256-cbc",
     cipher: "AES",
     keysize: 256,
@@ -30,6 +32,7 @@ var cipherSuites = [
     ivlength: 16
   },
   {
+    id: 2,
     name: "aes-128-cbc",
     cipher: "AES",
     keysize: 128,
@@ -38,6 +41,7 @@ var cipherSuites = [
     ivlength: 16
   },
   {
+    id: 3,
     name: "3des",
     cipher: "3DES",
     keysize: 168,
@@ -79,9 +83,9 @@ function decode(otk, keys, cb) {
   var otkVersion = buffer.readUInt8(index++);
   var cipherId   = buffer.readUInt8(index++);
   var cipher     = cipherSuites[cipherId].name;
-  var hmacHex    = buffer.toString('hex', index, index += 20);
+  var hmac       = buffer.slice(index, index += 20);
   var ivLength   = buffer.readUInt8(index++);
-  var iv         = "";
+  var iv         = null;
   if (ivLength > 0) {
     iv = buffer.slice(index, index += ivLength);
   }
@@ -105,6 +109,7 @@ function decode(otk, keys, cb) {
   var decipher = crypto.createDecipheriv(cipher, decryptionKey, iv);
   var compressedText = decipher.update(payloadCipherText);
 
+  // Debugging stuff
   //console.log("Token (base64): " + otk);
   //console.log("Buffer (hex): " + buffer.toString('hex'));
   //console.log("Buffer length is " + buffer.length);
@@ -114,7 +119,7 @@ function decode(otk, keys, cb) {
   console.log("OTK Header: %s", otkHeader);
   console.log("Version: %d", otkVersion);
   console.log("Cipher Suite: %d (%s)", cipherId, cipher);
-  console.log("SHA-1 HMAC (hex): 0x%s", hmacHex);
+  console.log("SHA-1 HMAC (hex): 0x%s", hmac.toString('hex'));
   console.log("IV length: %d", ivLength);
   console.log("IV (hex): 0x%s", iv.toString('hex'));
   console.log("Key Info Length: %d", keyInfoLen);
@@ -131,7 +136,6 @@ function decode(otk, keys, cb) {
     if (err) {
       cb(err);
     } else {
-      // TODO the next step with HMAC
       payload = buf;
       console.log("Payload: \n%s", payload);
       initializeHmac();
@@ -147,8 +151,32 @@ function decode(otk, keys, cb) {
   //    5. Payload length (2 bytes, network byte order)
   function initializeHmac() {
     console.log("Initializing HMAC");
-    var hmac = crypto.createHmac("sha1", decryptionKey);
-
+    var hmacTest = crypto.createHmac("sha1", decryptionKey);
+    var tmpBuf = new Buffer(1);
+    tmpBuf.writeUInt8(otkVersion, 0);
+    console.log("OTK Version for HMAC test: 0x" + tmpBuf.toString('hex'));
+    hmacTest.update(tmpBuf);
+    tmpBuf.writeUInt8(cipherId, 0);
+    console.log("Cipher ID for HMAC test: 0x" + tmpBuf.toString('hex'));
+    hmacTest.update(tmpBuf);
+    if (iv) {
+      hmacTest.update(iv);
+      console.log("IV value for HMAC test: 0x" + iv.toString('hex'));
+    } else {
+      console.log("IV value for HMAC test: doesn't exist");
+    }
+    if (keyInfo) {
+      hmacTest.update(keyInfo);
+      console.log("Key Info Value for HMAC test: 0x" + keyInfo.toString('hex'));
+    } else {
+      console.log("Key Info Value for HMAC test: doesn't exist");
+    }
+    var tmpBuf2 = new Buffer(2);
+    //tmpBuf2.writeUInt16LE(payloadLength, 0);
+    tmpBuf2.writeUInt16BE(payloadLength, 0);
+    hmacTest.update(tmpBuf2);
+    var hmacTestDigest = hmacTest.digest('hex');
+    console.log("HMAC digest to test against: 0x" + hmacTestDigest);
     // cheating out here.. TODO the rest of the steps!
     cb(null, payload);
   }
