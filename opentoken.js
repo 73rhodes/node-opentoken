@@ -94,7 +94,8 @@ function decode(otk, keys, cb) {
   var keyInfo = null;
   var keyInfoLen = buffer.readUInt8(index++);
   if (keyInfoLen) {
-    keyInfo = buffer.slice(index, index += keyInfoLen);
+    keyInfo = buffer.slice(index, index);// += keyInfoLen);
+    index += keyInfoLen;
   }
 
   // The key should be selected based on key info, ostensibly, but
@@ -102,7 +103,8 @@ function decode(otk, keys, cb) {
   var decryptionKey = new Buffer(keys[0], 'base64');
 
   // 5. Decrypt the payload cipher-text using the selected cipher suite
-  var payloadLength = buffer.readUInt16BE(index+=2);
+  var payloadLength = buffer.readUInt16BE(index); //+=2);
+  index += 2;
 
   var payloadCipherText = null;
   payloadCipherText = buffer.slice(index, index += payloadLength);
@@ -114,21 +116,21 @@ function decode(otk, keys, cb) {
   //console.log("Buffer (hex): " + buffer.toString('hex'));
   //console.log("Buffer length is " + buffer.length);
   // 
-  console.log("Decryption Key (hex) 0x" + decryptionKey.toString('hex'));
+  //console.log("Decryption Key (hex) 0x" + decryptionKey.toString('hex'));
   //
-  console.log("OTK Header: %s", otkHeader);
-  console.log("Version: %d", otkVersion);
-  console.log("Cipher Suite: %d (%s)", cipherId, cipher);
-  console.log("SHA-1 HMAC (hex): 0x%s", hmac.toString('hex'));
-  console.log("IV length: %d", ivLength);
-  console.log("IV (hex): 0x%s", iv.toString('hex'));
-  console.log("Key Info Length: %d", keyInfoLen);
-  if (keyInfo) {
-    console.log("Key Info (hex) : 0x%s", keyInfo.toString('hex'));
-  }
-  console.log("Payload length: %d", payloadLength);
-  console.log("Payload ciphertext (hex): 0x%s", payloadCipherText.toString('hex'));
-  console.log("Compressed text (hex): 0x%s" + compressedText.toString('hex'));
+  //console.log("OTK Header: %s", otkHeader);
+  //console.log("Version: %d", otkVersion);
+  //console.log("Cipher Suite: %d (%s)", cipherId, cipher);
+  //console.log("SHA-1 HMAC (hex): 0x%s", hmac.toString('hex'));
+  //console.log("IV length: %d", ivLength);
+  //console.log("IV (hex): 0x%s", iv.toString('hex'));
+  //console.log("Key Info Length: %d", keyInfoLen);
+  //if (keyInfo) {
+  //  console.log("Key Info (hex) : 0x%s", keyInfo.toString('hex'));
+  //}
+  //console.log("Payload length: %d", payloadLength);
+  //console.log("Payload ciphertext (hex): 0x%s", payloadCipherText.toString('hex'));
+  //console.log("Compressed text (hex): 0x%s" + compressedText.toString('hex'));
 
   // 6. Decompress the decrypted payload in accordance with RFC1950 and RFC1951
   var payload;
@@ -137,7 +139,7 @@ function decode(otk, keys, cb) {
       cb(err);
     } else {
       payload = buf;
-      console.log("Payload: \n%s", payload);
+      //console.log("Payload: \n%s", payload);
       initializeHmac();
     }
   });
@@ -150,34 +152,37 @@ function decode(otk, keys, cb) {
   //    4. Key info value (if present)
   //    5. Payload length (2 bytes, network byte order)
   function initializeHmac() {
-    console.log("Initializing HMAC");
-    var hmacTest = crypto.createHmac("sha1", decryptionKey);
-    var tmpBuf = new Buffer(1);
-    tmpBuf.writeUInt8(otkVersion, 0);
-    console.log("OTK Version for HMAC test: 0x" + tmpBuf.toString('hex'));
-    hmacTest.update(tmpBuf);
-    tmpBuf.writeUInt8(cipherId, 0);
-    console.log("Cipher ID for HMAC test: 0x" + tmpBuf.toString('hex'));
-    hmacTest.update(tmpBuf);
+    //console.log("Initializing HMAC");
+
+    var keyString = "0" + otkVersion.toString(16) + "0" + cipherId.toString(16);
+    var buffer1 = new Buffer(keyString, 'hex');
+    var buffers = [buffer1];
+
     if (iv) {
-      hmacTest.update(iv);
-      console.log("IV value for HMAC test: 0x" + iv.toString('hex'));
-    } else {
-      console.log("IV value for HMAC test: doesn't exist");
+      //console.log("adding iv 0x" + iv.toString('hex'));
+      buffers.push(iv);
     }
     if (keyInfo) {
-      hmacTest.update(keyInfo);
-      console.log("Key Info Value for HMAC test: 0x" + keyInfo.toString('hex'));
-    } else {
-      console.log("Key Info Value for HMAC test: doesn't exist");
+      buffers.push(keyInfo);
     }
-    var tmpBuf2 = new Buffer(2);
-    //tmpBuf2.writeUInt16LE(payloadLength, 0);
-    tmpBuf2.writeUInt16BE(payloadLength, 0);
-    hmacTest.update(tmpBuf2);
+
+    var buffer2 = new Buffer(2);
+    buffer2.writeUInt16BE(payloadLength, 0);
+    buffers.push(buffer2);
+
+    var hmacKey = Buffer.concat(buffers);
+    //console.log("hmacKey (hex): 0x" + hmacKey.toString('hex'));
+    var hmacTest = crypto.createHmac("sha1", hmacKey);
+
+    // 8. Update HMAC from previous step with uncompessed cleartext payload
+    hmacTest.update(payload);
     var hmacTestDigest = hmacTest.digest('hex');
-    console.log("HMAC digest to test against: 0x" + hmacTestDigest);
-    // cheating out here.. TODO the rest of the steps!
+    //console.log("HMAC digest to test against: 0x" + hmacTestDigest);
+    if (hmacTestDigest !== hmac.toString('hex')) {
+      console.log("Warning! HMAC does not match.");
+    }
+
+    // cheating out here... TODO fix the HMAC test above
     cb(null, payload);
   }
 }
