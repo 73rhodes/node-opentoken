@@ -4,7 +4,7 @@
   "description": "OpenToken support for Node.JS",
   "main": "opentoken.js",
   "scripts": {
-    "test": "node test/opentoken_test.js"
+    "test": "clear; node test/opentoken_test.js"
   },
   "repository": {
     "type": "git",
