@@ -10,7 +10,6 @@ var otk = require('../opentoken.js');
 var testToken = "T1RLAQK9THj0okLTUB663QrJFg5qA58IDhAb93ondvcx7sY6s44eszNqAAAga5W8Dc4XZwtsZ4qV3_lDI-Zn2_yadHHIhkGqNV5J9kw*"
 var testData = "foo=bar\nbar=baz";
 var testKey = "a66C9MvM8eY4qJKyCXKW+w=="; // from passwd generator function
-
 otk.decode(testToken, testKey, function (err, result) {
   process.stdout.write("Testing decode...");
   assert.ifError(err);
@@ -31,3 +30,13 @@ otk.decode(testToken2, testKey2, function (err, result) {
   process.stdout.write("OK\n");
 });
 
+/**
+ * Test Case 3 (Encode)
+ */
+var options = null;
+otk.encode(testData2, testKey2, options, function (err, result) {
+  process.stdout.write("Testing encode...");
+  assert.ifError(err);
+  assert.ok(result);
+  process.stdout.write("OK\n");
+});
