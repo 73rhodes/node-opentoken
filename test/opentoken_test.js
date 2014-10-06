@@ -22,7 +22,8 @@ otk.decode(testToken, testKey, function (err, result) {
 /**
  * Test Case 2 (self generated from 3rd part OpenToken lib)
  */
-var testToken2 = "T1RLAQLjjQ5X5syQ07anq_1m99BnDNTJexCNX35CAIIbj5A1kFp6vgn5AAAgyCcWB_xAGsUqiON2Sh4Yix5Ql8NV44MeWG4mbUKlRnE*";
+//var testToken2 = "T1RLAQLjjQ5X5syQ07anq_1m99BnDNTJexCNX35CAIIbj5A1kFp6vgn5AAAgyCcWB_xAGsUqiON2Sh4Yix5Ql8NV44MeWG4mbUKlRnE*";
+var testToken2 = "T1RLAQJHxWohC4euyRvd_Dfhmgj_F6jr5xD1QRzxbzWrTDX-SmPaE2dvAAAgTs4X_J3at_oDI4fStiIRX4S5WihrTpHY5ILYGUg7mxE*";
 var testKey2 = "c2JvSUgMTn1OqAeAjT0wgA=="; // from passwd generator function
 var testData2 = "subject=foobar\nfoo=bar\nbar=baz";
 //*
@@ -53,10 +54,10 @@ otk.encode(testData2, testKey2, options, function (err, result) {
 //*
 otk.encode(testData2, testKey2, null, function (err, token) {
   assert.ifError(err);
-  console.log("encode: token " + token);
-  otk.decode(token, testKey, function (err, data) {
+  console.log("encode: token = " + token);
+  otk.decode(token, testKey2, function (err, data) {
     console.log("Decoded token to " + data);
-    assert.equal(data, testData);
+    assert.equal(data, testData2);
   });
 });
 // */
