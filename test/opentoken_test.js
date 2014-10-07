@@ -2,10 +2,7 @@ var assert = require('assert');
 var otk = require('../opentoken.js');
 
 /**
- * Test Case 1 (IETF Draft Interop Test 1)
- * This test data in the IETF draft spec contains errors in the
- * first character, making the header literal "PTK" instead of "OTK".
- * This one has the proper 'OTK' header literal.
+ * Test Case 1 (token generated from 3rd party OpenToken lib)
  */
 var testToken = "T1RLAQLVVgI6nfAXif1wYQz-4Hoqqjpk-RCRhrYo_A3vfozy8DwQgX_iAAAgXtSyTiGFVbQGmJ7-USFFjaZYuPueXSr8Gl2W5APuFWw*";
 var testData = "subject=foobar\nfoo=bar\nbar=baz";
@@ -53,4 +50,3 @@ otk.encode(testData2, cipherId, testPassword, function (err, token) {
     }
   });
 });
-  

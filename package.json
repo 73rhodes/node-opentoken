@@ -21,5 +21,8 @@
   "bugs": {
     "url": "https://github.com/darrenderidder/node-opentoken/issues"
   },
-  "homepage": "https://github.com/darrenderidder/node-opentoken"
+  "homepage": "https://github.com/darrenderidder/node-opentoken",
+  "dependencies": {
+    "doxli": "^1.0.4"
+  }
 }
