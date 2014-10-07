@@ -7,57 +7,50 @@ var otk = require('../opentoken.js');
  * first character, making the header literal "PTK" instead of "OTK".
  * This one has the proper 'OTK' header literal.
  */
-var testToken = "T1RLAQK9THj0okLTUB663QrJFg5qA58IDhAb93ondvcx7sY6s44eszNqAAAga5W8Dc4XZwtsZ4qV3_lDI-Zn2_yadHHIhkGqNV5J9kw*"
-var testData = "foo=bar\nbar=baz";
-var testKey = "a66C9MvM8eY4qJKyCXKW+w=="; // from passwd generator function
+var testToken = "T1RLAQLVVgI6nfAXif1wYQz-4Hoqqjpk-RCRhrYo_A3vfozy8DwQgX_iAAAgXtSyTiGFVbQGmJ7-USFFjaZYuPueXSr8Gl2W5APuFWw*";
+var testData = "subject=foobar\nfoo=bar\nbar=baz";
+var testPassword = "testPassword";
 var cipherId = 2;
-/*
-otk.decode(testToken, cipherId, "testPassword", testKey, function (err, result) {
-  process.stdout.write("Test 1: decode...");
+otk.decode(testToken, cipherId, testPassword, function (err, result) {
   assert.ifError(err);
   assert.equal(result.toString(), testData);
-  process.stdout.write("OK\n");
+  process.stdout.write("Test 1: decode... OK\n");
 });
-// */
 
 /**
  * Test Case 2 (self generated from 3rd part OpenToken lib)
  */
-//var testToken2 = "T1RLAQLjjQ5X5syQ07anq_1m99BnDNTJexCNX35CAIIbj5A1kFp6vgn5AAAgyCcWB_xAGsUqiON2Sh4Yix5Ql8NV44MeWG4mbUKlRnE*";
-var testToken2 = "T1RLAQJHxWohC4euyRvd_Dfhmgj_F6jr5xD1QRzxbzWrTDX-SmPaE2dvAAAgTs4X_J3at_oDI4fStiIRX4S5WihrTpHY5ILYGUg7mxE*";
-var testKey2 = "c2JvSUgMTn1OqAeAjT0wgA=="; // from passwd generator function
-var testData2 = "subject=foobar\nfoo=bar\nbar=baz";
-/*
-otk.decode(testToken2, cipherId, "testPassword", testKey2, function (err, result) {
-  process.stdout.write("Test 2: decode...");
+var testToken2 = "T1RLAQIgGSTfOxeJB3DvBLmtTpeoJv4EuBDlc2cvMEYkYpWOa3Zl6WEMAAAwTJaEPU7Fh4Cud2k9M6XTFNon228y9N_-nFupGIr7tibxVLwkoGZILIb7eUlFEVxn";
+var testData2 = "subject=foobar\nfizz=buzz\nqux=doo";
+otk.decode(testToken2, cipherId, testPassword, function (err, result) {
   assert.ifError(err);
   assert.equal(result.toString(), testData2);
-  process.stdout.write("OK\n");
+  process.stdout.write("Test 2: decode... OK\n");
 });
-// */
 
 /**
- * Test Case 3 (Encode)
+ * Test Case 3 Encode & Decode
  */
-var options = null;
-/*
-otk.encode(testData2, cipherId, "testpassword", testKey2, options, function (err, result) {
-  process.stdout.write("Test 3: encode...");
+otk.encode(testData2, cipherId, testPassword, function (err, token) {
   assert.ifError(err);
-  assert.ok(result);
-  process.stdout.write("OK\n");
-  console.log(result);
-});
-// */
-
-/**
- * Test Case 4 Encode & Decode
- */
-otk.encode(testData2, cipherId, "testPassword", testKey2, null, function (err, token) {
-  process.stdout.write("Test 4: encode/decode...");
-  assert.ifError(err);
-  otk.decode(token, cipherId, "testPassword", testKey2, function (err, data) {
+  otk.decode(token, cipherId, testPassword, function (err, data) {
     assert.equal(data, testData2);
+    process.stdout.write("Test 3: encode/decode... OK\n");
   });
-  process.stdout.write("OK\n");
 });
+
+/**
+ * Test Case 4 Decode w wrong cipherID
+ */
+otk.encode(testData2, cipherId, testPassword, function (err, token) {
+  assert.ifError(err);
+  otk.decode(token, cipherId+1, testPassword, function (err, data) {
+    if (err) {
+      assert.ok( (/doesn\'t match/).test(err.message) );
+      process.stdout.write("Test 4: decode error... OK\n");
+    } else {
+      assert.fail(null, "Error", "Expected an error");
+    }
+  });
+});
+  
