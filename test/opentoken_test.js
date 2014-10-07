@@ -50,3 +50,17 @@ otk.encode(testData2, cipherId, testPassword, function (err, token) {
     }
   });
 });
+
+
+/**
+ *
+ */
+var otkapi = new otk.OpenTokenAPI(cipherId, testPassword);
+// token containing minimum required keys (subject, not-before, not-on-or-after, renew-until)
+var token3 = "T1RLAQJp8VBj2gcTNiHHMzf5W0xDiqMIQRA0g2wmp6U9FuwY7pj6wiuqAABQOx9-XSTI8w3uz4Jb40eb2GNoQ6K2MuJjo3ssfRboHuvRrFCHH40rPdywj-ZMmP-4chMJ1zWMC9AfBXQCwp8AQZMtOvK-podlhsI2nq1C0jU*";
+otkapi.parseToken(token3, function (err, result) {
+  process.stdout.write("Test 5: OpenTokenAPI::parseToken...");
+  assert.ifError(err);
+  assert.equal(result.subject, "foobar");
+  process.stdout.write("OK\n");
+});
