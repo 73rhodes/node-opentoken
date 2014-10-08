@@ -86,39 +86,43 @@ OpenTokenAPI.prototype.createToken = function (pairs, cb) {
     return null;
   }
   console.log(pairs);
-  // Check the minimum required key/value pairs.
+
+  // Set the minimum required key/value pairs.
+  var now = new Date();
+  var expiry = new Date(); // add some number of minutes or days etc
+  var renewUntil = new Date(); // add some number of days or whatever
+  // TODO make the values configurable
+
   if (!pairs.subject) {
     return cb(new Error("OpenToken missing 'subject'"));
   }
-  // TODO else validate
 
-  if (!pairs['not-before']) {
-    return cb(new Error("OpenToken missing 'not-before'"));
-  }
-  // TODO else validate
+  pairs['not-before'] = now;
+  pairs['not-on-or-after'] = expiry;
+  pairs['renew-until'] = renewUntil;
 
-  if (!pairs['not-on-or-after']) {
-    return cb(new Error("OpenToken missing 'not-on-or-after'"));
-  }
-  // TODO else validate
-
-  if (!pairs['renew-until']) {
-    return cb(new Error("OpenToken missing 'renew-until'"));
-  }
-  // TODO else validate
-
-  // probably parse the data into a 2D array [ [key, val], ...]
-  // then Array.join into [k=v, k2=v2] and k=v\nk2=v2 etc
+  // probably parse the data into a string
   var item;
   var keyValues = [];
-  for (item in data) {
-    if (data.hasOwnProperty(item)) {
-      console.log("Process " + item + ":" + data[item]);
-      keyValues.push(item + "=" + data[item]);
+  for (item in pairs) {
+    if (pairs.hasOwnProperty(item)) {
+      console.log("Process " + item + ":" + pairs[item]);
+      keyValues.push(item + "=" + pairs[item]);
     }
   }
   keyValues = keyValues.join("\n"); // collapse to string
   console.log(pairs);
+
+  encode(pairs, this.cipherId, this.password, processToken);
+  
+  function processToken(err, token) {
+    if (err) {
+      return cb(err);
+    }
+    console.log(token);
+    cb(null, token);
+  }
+  
 };
 
 
