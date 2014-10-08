@@ -1,6 +1,6 @@
 {
   "name": "opentoken",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "OpenToken support for Node.JS",
   "main": "opentoken.js",
   "scripts": {
@@ -11,9 +11,9 @@
     "url": "https://github.com/darrenderidder/node-opentoken.git"
   },
   "keywords": [
-    "OpenToken",
-    "Auth",
-    "SSO"
+    "authentication",
+    "passport",
+    "opentoken"
   ],
   "author": "Darren DeRidder",
   "license": "ISC",
