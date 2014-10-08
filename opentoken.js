@@ -19,6 +19,10 @@ var doxli  = require('doxli');
 function OpenTokenAPI(cipherSuite, password) {
   this.cipherSuite = cipherSuite;
   this.password = password;
+
+  // TODO make these values configurable
+  this.tokenTimeout  = 300 * 1000;   // token expires after 5 minutes
+  this.tokenRenewal  = 43200 * 1000; // keep renewing token for 12 hours
 }
 
 /**
@@ -82,46 +86,36 @@ OpenTokenAPI.prototype.parseToken = function (token, cb) {
  * @return {string} base64-encoded token 
  */
 OpenTokenAPI.prototype.createToken = function (pairs, cb) {
+
   if (!pairs || !cb) {
     return null;
   }
-  console.log(pairs);
 
   // Set the minimum required key/value pairs.
   var now = new Date();
-  var expiry = new Date(); // add some number of minutes or days etc
-  var renewUntil = new Date(); // add some number of days or whatever
-  // TODO make the values configurable
+  var expiry = new Date(now.getTime() + this.tokenTimeout);
+  var renewUntil = new Date(now.getTime() + this.tokenRenewal);
 
   if (!pairs.subject) {
     return cb(new Error("OpenToken missing 'subject'"));
   }
 
-  pairs['not-before'] = now;
-  pairs['not-on-or-after'] = expiry;
-  pairs['renew-until'] = renewUntil;
+  pairs['not-before'] = now.toISOString();
+  pairs['not-on-or-after'] = expiry.toISOString();
+  pairs['renew-until'] = renewUntil.toISOString();
 
-  // probably parse the data into a string
+  // Parse key-value pairs into a string
   var item;
   var keyValues = [];
   for (item in pairs) {
     if (pairs.hasOwnProperty(item)) {
-      console.log("Process " + item + ":" + pairs[item]);
       keyValues.push(item + "=" + pairs[item]);
     }
   }
-  keyValues = keyValues.join("\n"); // collapse to string
-  console.log(pairs);
 
-  encode(pairs, this.cipherId, this.password, processToken);
-  
-  function processToken(err, token) {
-    if (err) {
-      return cb(err);
-    }
-    console.log(token);
-    cb(null, token);
-  }
+  keyValues = keyValues.join("\n");
+
+  encode(keyValues, this.cipherId, this.password, cb);
   
 };
 
