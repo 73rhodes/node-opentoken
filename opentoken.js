@@ -12,31 +12,41 @@ var doxli  = require('doxli');
  * OpenTokenAPI constructor
  * OpenTokenAPI is an object with utility methods for reading
  * and writing OpenTokens with some automatic validation, etc.
+ * Note: Both CipherSuite and password null means unencrypted.
  *
  * @param {number} cipherSuite Cipher Suite ID (see ciphers.js)
  * @param {string} password    Encrypt/Decrypt password
  */
-function OpenTokenAPI(cipherSuite, password) {
+function OpenTokenAPI(cipherSuite, password, config) {
+
   this.cipherSuite = cipherSuite;
   this.password = password;
 
-  // TODO make these values configurable
-  this.tokenTimeout  = 300 * 1000;   // token expires after 5 minutes
-  this.tokenRenewal  = 43200 * 1000; // keep renewing token for 12 hours
+  // use additional config properties, if present
+  config = config || {};
+  this.tokenName     = config.tokenName;                      // or null
+  this.timeTolerance = (config.tolerance    || 120) * 1000;   // 2 minutes
+  this.tokenTimeout  = (config.tokenTimeout || 300) * 1000;   // 5 minutes
+  this.tokenRenewal  = (config.tokenRenewal || 43200) * 1000; // renew 12 hrs
+
 }
 
 /**
  * Parse an OpenToken and apply basic validation checks
  *
- * @param {string} token The raw token basd64 encoded string
- * @param {function} cb Callback function
+ * @param  {string}   token  The raw token basd64 encoded string
+ * @param  {function} cb     Callback function
  * @return {object} Key-value pairs from token, returned via callback
  */
 OpenTokenAPI.prototype.parseToken = function (token, cb) {
   if (!token || !cb) {
     return null;
   }
+
+  var self = this;
+
   decode(token, this.cipherSuite, this.password, processPayload);
+
   function processPayload(err, data) {
     if (err) {
       return cb(err);
@@ -58,22 +68,31 @@ OpenTokenAPI.prototype.parseToken = function (token, cb) {
     if (!pairs.subject) {
       return cb(new Error("OpenToken missing 'subject'"));
     }
-    // TODO else validate
 
-    if (!pairs['not-before']) {
-      return cb(new Error("OpenToken missing 'not-before'"));
+    var now          = new Date();
+    var tolerance    = new Date(Date.now() + self.timeTolerance);
+    var notBefore    = new Date(pairs['not-before']);
+    var notOnOrAfter = new Date(pairs['not-on-or-after']);
+    var renewUntil   = new Date(pairs['renew-until']);
+
+    if (notBefore > notOnOrAfter) {
+      return cb(new Error("'not-on-or-after' should be above 'not-before'"));
     }
-    // TODO else validate
+
+    if (notBefore > now && notBefore > tolerance) {
+      err = new Error("Must not use this token before " + notBefore);
+      return cb(err);
+    }
  
-    if (!pairs['not-on-or-after']) {
-      return cb(new Error("OpenToken missing 'not-on-or-after'"));
+    if (now > notOnOrAfter) {
+      err = new Error("This token has expired as of " + notOnOrAfter);
+      return cb(err);
     }
-    // TODO else validate
 
-    if (!pairs['renew-until']) {
-      return cb(new Error("OpenToken missing 'renew-until'"));
+    if (now > renewUntil) {
+      err = new Error("This token is past its renewal limit " + renewUntil);
+      return cb(err);
     }
-    // TODO else validate
 
     return cb(null, pairs);
   }
@@ -81,8 +100,8 @@ OpenTokenAPI.prototype.parseToken = function (token, cb) {
 
 /**
  * Create a token from an object of key-value pairs to encode.
- * @param {object} data Object with key:value pairs to encode
- * @param {function} cb Callback
+ * @param  {object}   data  Object with key:value pairs to encode
+ * @param  {function} cb    Callback
  * @return {string} base64-encoded token 
  */
 OpenTokenAPI.prototype.createToken = function (pairs, cb) {
