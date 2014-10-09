@@ -24,10 +24,10 @@ function OpenTokenAPI(cipherSuite, password, config) {
 
   // use additional config properties, if present
   config = config || {};
-  this.tokenName     = config.tokenName;                      // or null
-  this.timeTolerance = (config.tolerance    || 120) * 1000;   // 2 minutes
-  this.tokenTimeout  = (config.tokenTimeout || 300) * 1000;   // 5 minutes
-  this.tokenRenewal  = (config.tokenRenewal || 43200) * 1000; // renew 12 hrs
+  this.tokenName     = config.tokenName;     // or null - not used yet
+  this.timeTolerance = (config.tolerance     || 120) * 1000;   // 2 minutes
+  this.tokenLifetime = (config.tokenLifetime || 300) * 1000;   // 5 minutes
+  this.tokenRenewal  = (config.tokenRenewal  || 43200) * 1000; // renew 12 hrs
 
 }
 
@@ -112,7 +112,7 @@ OpenTokenAPI.prototype.createToken = function (pairs, cb) {
 
   // Set the minimum required key/value pairs.
   var now = new Date();
-  var expiry = new Date(now.getTime() + this.tokenTimeout);
+  var expiry = new Date(now.getTime() + this.tokenLifetime);
   var renewUntil = new Date(now.getTime() + this.tokenRenewal);
 
   if (!pairs.subject) {
