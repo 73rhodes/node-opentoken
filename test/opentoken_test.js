@@ -166,3 +166,6 @@ var otkapi = new otk.OpenTokenAPI(cipherId, testPassword);
     });
   });
 }());
+
+// TODO try instantiating OpenTokenAPI with different options
+//      and testing pass / fail cases
