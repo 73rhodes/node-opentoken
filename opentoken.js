@@ -3,8 +3,9 @@
  * http://tools.ietf.org/html/draft-smith-opentoken-02
  */
 
-var decode  = require('./lib/decode');
-var encode = require('./lib/encode');
+var token  = require('./lib/token');
+var decode = token.decode;
+var encode = token.encode;
 var doxli  = require('doxli');
 
 
