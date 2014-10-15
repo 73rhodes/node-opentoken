@@ -6,7 +6,6 @@
 var token  = require('./lib/token');
 var decode = token.decode;
 var encode = token.encode;
-var doxli  = require('doxli');
 
 
 /**
@@ -143,6 +142,3 @@ OpenTokenAPI.prototype.createToken = function (pairs, cb) {
 exports.OpenTokenAPI = OpenTokenAPI;
 exports.decode = decode;
 exports.encode = encode;
-
-// Add help function to exports
-doxli(this);

@@ -22,6 +22,5 @@
   },
   "homepage": "https://github.com/darrenderidder/node-opentoken",
   "dependencies": {
-    "doxli": "^1.0.4"
   }
 }
