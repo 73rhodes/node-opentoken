@@ -3,6 +3,10 @@ node-opentoken
 
 OpenToken support for Node.JS
 
+Install
+-------
+`npm install opentoken`
+
 Usage
 -----
 See the following:
