@@ -3,4 +3,9 @@ node-opentoken
 
 OpenToken support for Node.JS
 
-See test/opentoken_test.js for usage examples.
+Usage
+-----
+See the following:
+
+  * [test/opentoken_test.js](https://github.com/darrenderidder/opentoken/test/opentoken_test.js)
+  * [passport-opentoken](https://github.com/darrenderidder/passport-opentoken)
