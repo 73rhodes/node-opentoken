@@ -3,6 +3,12 @@ node-opentoken
 
 OpenToken support for Node.JS
 
+http://tools.ietf.org/html/draft-smith-opentoken-02
+
+Install
+-------
+`npm install opentoken`
+
 Usage
 -----
 See the following:
