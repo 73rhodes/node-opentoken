@@ -24,7 +24,7 @@ function OpenTokenAPI(cipherSuite, password, config) {
 
   // use additional config properties, if present
   config = config || {};
-  this.timeTolerance = (config.tolerance     || 120) * 1000;   // 2 minutes
+  this.timeTolerance = (config.tokenTolerance || 120) * 1000;   // 2 minutes
   this.tokenLifetime = (config.tokenLifetime || 300) * 1000;   // 5 minutes
   this.tokenRenewal  = (config.tokenRenewal  || 43200) * 1000; // renew 12 hrs
 
