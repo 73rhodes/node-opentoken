@@ -1,6 +1,6 @@
 {
   "name": "opentoken",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "OpenToken support for Node.JS",
   "main": "opentoken.js",
   "scripts": {
