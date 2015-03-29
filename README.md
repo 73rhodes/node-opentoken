@@ -9,6 +9,8 @@ Install
 -------
 `npm install opentoken`
 
+<img src="http://npm.packagequality.com/badge/opentoken.png"/>
+
 Usage
 -----
 See the following:
