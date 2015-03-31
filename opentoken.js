@@ -56,7 +56,7 @@ OpenTokenAPI.prototype.parseToken = function (token, cb) {
     var pairs = {};
     var kvps = data.split("\n");
     kvps.forEach(function (x,i,arr) {
-      arr[i] = x.split("=");
+      arr[i] = x.split(/=(.+)?/);
     });
 
     for (index in kvps) {

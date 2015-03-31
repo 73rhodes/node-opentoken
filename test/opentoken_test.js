@@ -32,13 +32,13 @@ var otkapi = new OpenTokenAPI(cipherId, testPassword);
 
 // Test OpenTokenAPI.createToken & parseToken
 !(function () {
-  var testData = {subject: "foobar"};
+  var testData = {subject: "fooba=r"};
   otkapi.createToken(testData, function (err, result) {
     assert.ifError(err);
     otkapi.parseToken(result, function (err, data) {
       process.stdout.write("Test OpenTokenAPI::createToken/parseToken... ");
       assert.ifError(err);
-      assert.equal(data.subject, "foobar");
+      assert.equal(data.subject, "fooba=r");
       process.stdout.write("OK\n");
     });
   });
