@@ -1,10 +1,11 @@
 var assert = require('assert');
 var token  = require('../lib/token.js');
+var OpenTokenAPI = require('../opentoken.js').OpenTokenAPI;
+
 var yesterday = new Date(Date.now() - (24 * 3600 * 1000));
 var tomorrow  = new Date(Date.now() + (24 * 3600 * 1000));
 var testPassword = "testPassword";
 var cipherId = 2;
-var OpenTokenAPI = require('../opentoken.js').OpenTokenAPI;
 var otkapi = new OpenTokenAPI(cipherId, testPassword);
 
 

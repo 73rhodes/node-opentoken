@@ -18,7 +18,7 @@ var cipherId = 2;
   });
 }());
 
-// Test decode (self generated from 3rd part OpenToken lib)
+// Test decode (self generated from 3rd party OpenToken lib)
 !(function () {
   var testToken = "T1RLAQIgGSTfOxeJB3DvBLmtTpeoJv4EuBDlc2cvMEYkYpWOa3Zl6WEMAAAwTJaEPU7Fh4Cud2k9M6XTFNon228y9N_-nFupGIr7tibxVLwkoGZILIb7eUlFEVxn";
   var testData = "subject=foobar\nfizz=buzz\nqux=doo";
@@ -43,7 +43,20 @@ var cipherId = 2;
   });
 }());
 
-// Test Decode w wrong cipherID
+// Test Encode & Decode of array values
+!(function () {
+  var testData = "subject=foo\ngroups=[foo,bar]";
+  otk.encode(testData, cipherId, testPassword, function (err, token) {
+    assert.ifError(err);
+    otk.decode(token, cipherId, testPassword, function (err, data) {
+      process.stdout.write("Test encode/decode of array values... ");
+      assert.equal(data, testData);
+      process.stdout.write("OK\n");
+    });
+  });
+}());
+
+// Test Decode with wrong cipherID
 !(function () {
   var testData = "subject=foobar\nfizz=buzz\nqux=doo";
   otk.encode(testData, cipherId, testPassword, function (err, token) {
@@ -55,23 +68,6 @@ var cipherId = 2;
         process.stdout.write("OK\n");
       } else {
         assert.fail(null, "Error", "Expected an error");
-      }
-    });
-  });
-}());
-
-// try parsing a token earlier than allowed 
-!(function() {
-  var testData = "subject=foobar\nnot-before=" + tomorrow.toISOString();
-  otk.encode(testData, cipherId, testPassword, function (err, token) {
-    assert.ifError(err);
-    otkapi.parseToken(token, function (err, data) {
-      process.stdout.write("Testing token prior to not-before date... ");
-      if (err) {
-        assert.ok( (/Must not use this token before/i).test(err.message) );
-        process.stdout.write("OK\n");
-      } else {
-        assert.fail(data, null, "Expected error 'Must not use this token...'");
       }
     });
   });

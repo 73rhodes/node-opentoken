@@ -4,11 +4,11 @@
   "description": "OpenToken support for Node.JS",
   "main": "opentoken.js",
   "scripts": {
-    "test": "clear; node test/opentoken_test.js"
+    "test": "node test/opentoken_test.js && node test/token_test.js"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/73rhodes/node-opentoken.git"
+    "url": "https://github.com/jantaylor/node-opentoken.git"
   },
   "keywords": [
     "authentication",
@@ -17,13 +17,13 @@
   ],
   "author": "Darren DeRidder",
   "contributors": [
-    "Airic Yu <airic.yu@gmail.com>"
+    "Airic Yu <airic.yu@gmail.com>",
+    "Jan Taylor <jantaylor@users.noreply.github.com>"
   ],
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/73rhodes/node-opentoken/issues"
+    "url": "https://github.com/jantaylor/node-opentoken/issues"
   },
-  "homepage": "https://github.com/73rhodes/node-opentoken",
-  "dependencies": {
-  }
+  "homepage": "https://github.com/jantaylor/node-opentoken",
+  "dependencies": {}
 }
