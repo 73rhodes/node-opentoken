@@ -59,10 +59,12 @@ OpenTokenAPI.prototype.parseToken = function (token, cb) {
       arr[i] = x.split(/=(.+)?/);
     });
 
+    // Convert/add to the key's value array if multiple exist
     for (index in kvps) {
-      pairs[kvps[index][0]] = kvps[index][1];
+      var key = kvps[index][0], value = kvps[index][1];
+      pairs[key] = key in pairs ? [].concat(pairs[key], value) : value
     }
-    
+
     // Check the minimum required key/value pairs.
     if (!pairs.subject) {
       return cb(new Error("OpenToken missing 'subject'"));
@@ -139,5 +141,3 @@ OpenTokenAPI.prototype.createToken = function (pairs, cb) {
 
 
 exports.OpenTokenAPI = OpenTokenAPI;
-//exports.decode = decode;
-//exports.encode = encode;
