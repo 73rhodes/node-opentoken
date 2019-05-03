@@ -7,7 +7,7 @@ var testPassword = "testPassword";
 var cipherId = 2;
 
 // Test decode (token generated from 3rd party OpenToken lib)
-!(function () {
+(function () {
   var testToken = "T1RLAQLVVgI6nfAXif1wYQz-4Hoqqjpk-RCRhrYo_A3vfozy8DwQgX_iAAAgXtSyTiGFVbQGmJ7-USFFjaZYuPueXSr8Gl2W5APuFWw*";
   var testData = "subject=foobar\nfoo=bar\nbar=baz";
   otk.decode(testToken, cipherId, testPassword, function (err, result) {
@@ -19,7 +19,7 @@ var cipherId = 2;
 }());
 
 // Test decode (self generated from 3rd party OpenToken lib)
-!(function () {
+(function () {
   var testToken = "T1RLAQIgGSTfOxeJB3DvBLmtTpeoJv4EuBDlc2cvMEYkYpWOa3Zl6WEMAAAwTJaEPU7Fh4Cud2k9M6XTFNon228y9N_-nFupGIr7tibxVLwkoGZILIb7eUlFEVxn";
   var testData = "subject=foobar\nfizz=buzz\nqux=doo";
   otk.decode(testToken, cipherId, testPassword, function (err, result) {
@@ -31,7 +31,7 @@ var cipherId = 2;
 }());
 
 // Test Encode & Decode
-!(function () {
+(function () {
   var testData = "subject=foobar\nfizz=buzz\nqux=doo";
   otk.encode(testData, cipherId, testPassword, function (err, token) {
     assert.ifError(err);
@@ -44,7 +44,7 @@ var cipherId = 2;
 }());
 
 // Test Encode & Decode of array values
-!(function () {
+(function () {
   var testData = "subject=foo\ngroups=[foo,bar]";
   otk.encode(testData, cipherId, testPassword, function (err, token) {
     assert.ifError(err);
@@ -57,7 +57,7 @@ var cipherId = 2;
 }());
 
 // Test Decode with wrong cipherID
-!(function () {
+(function () {
   var testData = "subject=foobar\nfizz=buzz\nqux=doo";
   otk.encode(testData, cipherId, testPassword, function (err, token) {
     assert.ifError(err);

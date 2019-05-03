@@ -10,7 +10,7 @@ var otkapi = new OpenTokenAPI(cipherId, testPassword);
 
 
 // Test OpenTokenAPI.parseToken
-!(function () {
+(function () {
   // token w required keys (subject, not-before, not-on-or-after, renew-until)
   var token = "T1RLAQJp8VBj2gcTNiHHMzf5W0xDiqMIQRA0g2wmp6U9FuwY7pj6wiuqAABQOx9-XSTI8w3uz4Jb40eb2GNoQ6K2MuJjo3ssfRboHuvRrFCHH40rPdywj-ZMmP-4chMJ1zWMC9AfBXQCwp8AQZMtOvK-podlhsI2nq1C0jU*";
   otkapi.parseToken(token, function (err, result) {
@@ -22,7 +22,7 @@ var otkapi = new OpenTokenAPI(cipherId, testPassword);
 }());
 
 // Test OpenTokenAPI.createToken
-!(function () {
+(function () {
   var testData = {subject: "foobar"};
   otkapi.createToken(testData, function (err, result) {
     process.stdout.write("Test OpenTokenAPI::createToken... ");
@@ -32,7 +32,7 @@ var otkapi = new OpenTokenAPI(cipherId, testPassword);
 }());
 
 // Test OpenTokenAPI.createToken & parseToken
-!(function () {
+(function () {
   var testData = {subject: "fooba=r"};
   otkapi.createToken(testData, function (err, result) {
     assert.ifError(err);
@@ -46,7 +46,7 @@ var otkapi = new OpenTokenAPI(cipherId, testPassword);
 }());
 
 // try parsing a token earlier than allowed 
-!(function() {
+(function() {
   var testData = "subject=foobar\nnot-before=" + tomorrow.toISOString();
   token.encode(testData, cipherId, testPassword, function (err, token) {
     assert.ifError(err);
@@ -63,7 +63,7 @@ var otkapi = new OpenTokenAPI(cipherId, testPassword);
 }());
 
 // try parsing a token that's expired
-!(function () {
+(function () {
   var testData = "subject=fizzbuzz\nnot-on-or-after=" + yesterday.toISOString();
   token.encode(testData, cipherId, testPassword, function (err, token) {
     assert.ifError(err);
@@ -80,7 +80,7 @@ var otkapi = new OpenTokenAPI(cipherId, testPassword);
 }());
 
 // try parsing a token that's past its renewal date
-!(function () {
+(function () {
   var testData  = "subject=foobar\nrenew-until=" + yesterday.toISOString();
   token.encode(testData, cipherId, testPassword, function (err, token) {
     assert.ifError(err);
@@ -97,7 +97,7 @@ var otkapi = new OpenTokenAPI(cipherId, testPassword);
 }());
 
 // try parsing token where not-before > not-on-or-after
-!(function () {
+(function () {
   var testData = "subject=quxdoo\nnot-before=" + tomorrow.toISOString() +
     "\nnot-on-or-after=" + yesterday.toISOString();
   token.encode(testData, cipherId, testPassword, function (err, token) {
