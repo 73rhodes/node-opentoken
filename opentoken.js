@@ -6,6 +6,8 @@
 var token  = require('./lib/token');
 var decode = token.decode;
 var encode = token.encode;
+var obfuscatePassword = token.obfuscatePassword;
+var deobfuscatePassword = token.deobfuscatePassword;
 
 
 /**
@@ -139,5 +141,30 @@ OpenTokenAPI.prototype.createToken = function (pairs, cb) {
   
 };
 
+/**
+ * Create the obfuscated password from a UTF-8-encoded password.
+ *
+ * @param  {string} utf8Password UTF-8-encoded password
+ * @param  {string} base64obfuscatedPasswordKey Base64-encoded obfuscation key for des-ede3-cbc
+ * @param  {string} base64obfuscatedPasswordIv Base64-encoded obfuscation IV for des-ede3-cbc
+ * @return {string} Base64-encoded obfuscated password
+ */
+OpenTokenAPI.prototype.obfuscatePassword = function (
+  utf8Password, base64obfuscatePasswordKey, base64obfuscatePasswordIv) {
+  return obfuscatePassword(utf8Password, base64obfuscatePasswordKey, base64obfuscatePasswordIv);
+};
+
+/**
+ * Deobfuscate the given Base64-encoded obfuscated password.
+ *
+ * @param  {string} base64password Base64-encoded obfuscated password
+ * @param  {string} base64obfuscatedPasswordKey Base64-encoded obfuscation key for des-ede3-cbc
+ * @param  {string} base64obfuscatedPasswordIv Base64-encoded obfuscation IV for des-ede3-cbc
+ * @return {string} UTF-8-encoded deobfuscated password
+ */
+OpenTokenAPI.prototype.deobfuscatePassword = function (
+  base64password, base64obfuscatePasswordKey, base64obfuscatePasswordIv) {
+  return deobfuscatePassword(base64password, base64obfuscatePasswordKey, base64obfuscatePasswordIv);
+};
 
 exports.OpenTokenAPI = OpenTokenAPI;
