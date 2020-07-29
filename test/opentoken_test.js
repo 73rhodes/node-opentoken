@@ -1,4 +1,5 @@
 var assert = require('assert');
+var crypto = require('crypto');
 var token  = require('../lib/token.js');
 var OpenTokenAPI = require('../opentoken.js').OpenTokenAPI;
 
@@ -112,6 +113,38 @@ var otkapi = new OpenTokenAPI(cipherId, testPassword);
       }
     });
   });
+}());
+
+// try obfuscating and deobfuscating a fixed password using fixed key and fixed iv
+(function () {
+  const testKey = "Mz7BARLx2suTqhyQqbHahietYpxLl9CX";
+  const testIv = "LFWiaEouIf8=";
+  const testPassword = "2FederateTestPassword";
+  const obfuscatedPassword = otkapi.obfuscatePassword(testPassword, testKey, testIv);
+  process.stdout.write("Test OpenTokenAPI::obfuscatePassword... ");
+  assert.equal(obfuscatedPassword, "KMLP/evZZ95Lzyy7ZcnoY+igubViZyFl");
+  process.stdout.write("OK\n");
+  process.stdout.write("Test OpenTokenAPI::deobfuscatePassword... ");
+  const deobfuscatedPassword = otkapi.deobfuscatePassword(obfuscatedPassword, testKey, testIv);
+  assert.equal(deobfuscatedPassword, testPassword);
+  process.stdout.write("OK\n");
+}());
+
+// returns a base64-encoded string of "numberBytes" random bytes
+function randomBytes(numberBytes) {
+  return crypto.randomBytes(numberBytes).toString('base64');
+}
+
+// try obfuscating and deobfuscating a random password using a random key and a random iv
+(function () {
+  const testKey = randomBytes(24);
+  const testIv = randomBytes(8);
+  const testPassword = randomBytes(20);
+  process.stdout.write("Test OpenTokenAPI::obfuscatePassword and OpenTokenAPI::deobfuscatePassword... ");
+  const obfuscatedPassword = otkapi.obfuscatePassword(testPassword, testKey, testIv);
+  const deobfuscatedPassword = otkapi.deobfuscatePassword(obfuscatedPassword, testKey, testIv);
+  assert.equal(deobfuscatedPassword, testPassword);
+  process.stdout.write("OK\n");
 }());
 
 // TODO try instantiating OpenTokenAPI with different options
