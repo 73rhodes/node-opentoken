@@ -122,9 +122,10 @@ OpenTokenAPI.prototype.createToken = function (pairs, cb) {
     return cb(new Error("OpenToken missing 'subject'"));
   }
 
-  pairs['not-before'] = now.toISOString();
-  pairs['not-on-or-after'] = expiry.toISOString();
-  pairs['renew-until'] = renewUntil.toISOString();
+  // Format as "yyyy-MM-ddTHH:mm:ssZ" per OpenToken spec
+  pairs['not-before'] = now.toISOString().split('.')[0] + 'Z';
+  pairs['not-on-or-after'] = expiry.toISOString().split('.')[0] + 'Z';
+  pairs['renew-until'] = renewUntil.toISOString().split('.')[0] + 'Z';
 
   // Parse key-value pairs into a string
   var item;
