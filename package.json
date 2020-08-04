@@ -1,6 +1,6 @@
 {
   "name": "opentoken",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "OpenToken support for Node.JS",
   "main": "opentoken.js",
   "scripts": {
@@ -18,7 +18,8 @@
   "author": "Darren DeRidder",
   "contributors": [
     "Airic Yu <airic.yu@gmail.com>",
-    "Jan Taylor <jantaylor@users.noreply.github.com>"
+    "Jan Taylor <jantaylor@users.noreply.github.com>",
+    "Fabian Foerg <28877604+faf0-addepar@users.noreply.github.com>"
   ],
   "license": "ISC",
   "bugs": {
